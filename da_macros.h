@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stddef.h>
+#include <string.h>
 
 #define da_type(name, type) \
     typedef struct name { \
@@ -17,4 +18,39 @@
     } \
     xs.items[xs.count++] = x;} while (0)
 
+#define da_setref_ex(xs, ptr, size_, count_) \
+    do { \
+        if (xs.items) free(xs.items); \
+        xs.items = ptr; \
+        xs.capacity = size_; \
+        xs.count = count_; \
+    } while (0)
+
+#define da_setcpy_ex(xs, ptr, size_, count_) \
+    do { \
+        if (xs.items) free(xs.items); \
+        xs.items = realloc(xs.items, size_); \
+        xs.capacity = size_; \
+        xs.count = count_; \
+        memcpy(xs.items, ptr, size_); \
+    } while (0)
+
+#define da_setref(xs, ys) \
+    do { \
+        if (xs.items) free(xs.items); \
+        xs.items = ys.items; \
+        xs.capacity = ys.capacity; \
+        xs.count = ys.count; \
+    } while (0)
+
+#define da_setcpy(xs, ys) \
+    do { \
+        if (xs.items) free(xs.items); \
+        xs.items = realloc(xs.items, ys.capacity); \
+        xs.capacity = ys.capacity; \
+        xs.count = ys.count; \
+        memcpy(xs.items, ys.items, ys.capacity); \
+    } while (0)
+
 #define da_init { 0 }
+#define da_autoinit(dec) dec = da_init
